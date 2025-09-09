@@ -60,4 +60,38 @@ Conectar nutricionistas, pacientes e produtores de alimentos em uma única plata
 
 ---
 
+## 8. Bounded Context
+
+- **User**  
+  Responsável por identidades e perfis de usuários.  
+
+- **Nutrition Plan**  
+  Gestão de planos de nutrição, consultas e assinaturas.  
+
+- **Seller Management**  
+  Cadastro e atributos dos sellers (fornecedores/parceiros).  
+
+- **Product Catalog**  
+  Catálogo de produtos, preços e restrições.  
+
+- **Ordering**  
+  Fluxo de pedidos: criação, atualização e status de ordens.  
+
+- **Billing & Payment**  
+  Cobranças, pagamentos e integração com PSPs externos.  
+
+- **Notifications & Comms**  
+  Envio de mensagens e notificações (event-driven).
+
+
+| **Origem**         | **Destino**                   | **Tipo de Relacionamento**             | **Explicação**                                                                  |
+|--------------------|-------------------------------|----------------------------------------|---------------------------------------------------------------------------------|
+| User               | Todos                         | Customer–Supplier + Shared Kernel mínimo | Fornece identidades/perfis; compartilhar só tipos estáveis (UserId, Email).   |
+| Seller Management  | Product Catalog               | Customer–Supplier                      | Cadastro/atributos de sellers alimentam o catálogo.                             |
+| Product Catalog    | Ordering                      | Customer–Supplier                      | Ordering depende de itens, preços e restrições do catálogo.                     |
+| Ordering           | Billing & Payment             | Customer–Supplier                      | Ordering solicita autorizações/capturas; Payments responde com status interno.  |
+| Billing & Payment  | PSP externo                   | Anti-Corruption Layer                  | Tradução de status/erros do provedor para o modelo interno (protege o domínio). |
+| Nutrition Plan     | Notifications & Comms         | Customer–Supplier (event-driven)       | Eventos PlanCreated/PlanUpdated disparam mensagens ao paciente.                 |
+| Ordering           | Notifications & Comms         | Customer–Supplier (event-driven)       | Eventos OrderPlaced/OrderPaid/OrderFulfilled geram notificações.                |
+| Nutrition Plan     | Billing & Payment (plano pago) | Customer–Supplier                     | Dispara cobranças de assinatura/sessão quando aplicável.                        |
 
