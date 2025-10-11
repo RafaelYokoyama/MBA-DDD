@@ -90,6 +90,55 @@ Conectar nutricionistas, pacientes e produtores de alimentos em uma única plata
 
 - **Notifications & Comms**  
   Envio de mensagens e notificações (event-driven).
+
+```mermaid
+flowchart LR
+  %% ===== Bounded Contexts =====
+  User[User - Identities & Profiles]
+  NP[Nutrition Plan - Plans, Consultations, Subscriptions]
+  SM[Seller Management - Seller Registry / Partners]
+  PC[Product Catalog - Products, Prices, Constraints]
+  OR[Ordering - Order Flow, Status, Updates]
+  BP[Billing & Payment - Charges, Payments, PSP Integration]
+  NC[Notifications & Comms - Event-driven Messaging]
+  PSP[External PSP - Provider Layer]
+
+  %% ===== Relationships =====
+  %% User → All (Shared Kernel + Customer–Supplier)
+  User -->|Customer-Supplier| NP
+  User -->|Customer-Supplier| SM
+  User -->|Customer-Supplier| PC
+  User -->|Customer-Supplier| OR
+  User -->|Customer-Supplier| BP
+  User -->|Customer-Supplier| NC
+
+  %% Seller → Product Catalog
+  SM -->|Feeds seller data| PC
+
+  %% Product Catalog → Ordering
+  PC -->|Provides product data| OR
+
+  %% Ordering → Billing & Payment
+  OR -->|Requests payment| BP
+
+  %% Billing & Payment → PSP externo
+  BP -->|Translates provider models| PSP
+
+  %% Event-driven relationships
+  NP -->|PlanCreated / PlanUpdated| NC
+  OR -->|Order events| NC
+
+  %% Nutrition Plan → Billing & Payment (paid plans)
+  NP -->|Triggers billing| BP
+
+  %% ===== Legend =====
+  %% Customer–Supplier: downstream depends on upstream's model/contracts
+  %% Shared Kernel: shared stable types (e.g., UserId, Email)
+  %% Anti-Corruption Layer: isolates external provider complexity
+  %% Event-driven: communication via asynchronous domain events
+
+```
+  
   
 #  Mapeamento de Contextos
 
