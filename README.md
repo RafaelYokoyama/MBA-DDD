@@ -310,5 +310,11 @@ classDiagram
     %% ===== Referências por ID entre agregados (sem conter outros agregados) =====
     Pedido ..> Paciente : ref idPaciente
     Pedido ..> Fornecedor : ref idFornecedor
+```
+# Event Storming
+
+![Imagem do WhatsApp de 2025-10-11 à(s) 11 31 22_899d23fa](https://github.com/user-attachments/assets/75058ac7-27ab-4cfd-82a5-22f87e2b0ea3)
+
+
 
 
